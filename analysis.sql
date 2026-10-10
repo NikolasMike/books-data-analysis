@@ -20,3 +20,16 @@ FROM books
 WHERE num_pages IS NOT NULL AND ratings_count >= 100
 GROUP BY length
 ORDER BY avg_rating DESC;
+
+-- 5. Average rating by decade (only reliable for 1980-2000, see coverage below)
+SELECT
+  FLOOR(EXTRACT(YEAR FROM publication_date) / 10) * 10 AS decade,
+  COUNT(*) AS books,
+  ROUND(AVG(average_rating), 2) AS avg_rating
+FROM books
+WHERE publication_date IS NOT NULL AND ratings_count >= 100
+GROUP BY decade
+ORDER BY decade;
+
+-- 6. Books per year: coverage drops sharply after 2007
+SELECT EXTRACT(YEAR FROM publication_date) AS year, COUNT(*) FROM books WHERE publication_date >= '2005-01-01' GROUP BY year ORDER BY year;
