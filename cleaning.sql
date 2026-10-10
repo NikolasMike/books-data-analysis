@@ -6,3 +6,8 @@ UPDATE books SET average_rating = NULL WHERE average_rating = 0 AND ratings_coun
 
 -- 0 pages is a missing value (audiobooks, collections, or missing data)
 UPDATE books SET num_pages = NULL WHERE num_pages = 0;
+
+
+
+-- Same publisher written 3 ways (VIZ Media, Viz Media, VIZ Media LLC)
+UPDATE books SET publisher = 'VIZ Media' WHERE publisher ILIKE '%viz media%';
