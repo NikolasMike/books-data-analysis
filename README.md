@@ -28,17 +28,33 @@ The `authors` column held several authors per cell (4,564 books, 41%), which bre
 - **Best average rating** (publishers with 20+ books): Library of America and Tyndale House (4.26), then VIZ Media (4.25).
 - **Most rated book:** Twilight (4.6M ratings) but with a 3.59 rating, the lowest of the top 10. More ratings does not mean a better rating.
 - **Book length:** long books (400+ pages) have the highest average rating (4.03) versus short (3.95) and medium (3.91). The result held when filtering to books with 100+ ratings.
-- **Cleaning changed the conclusions:** unifying `VIZ Media` moved it into the publisher ranking.
+- **Cleaning changed the results:** unifying 3 spellings of `VIZ Media` merged two ranking entries into one (4.25) and counted 14 books that had been filtered out for having fewer than 20 books under that name.
+- **Most books by author:** Stephen King (99), William Shakespeare (93), J.R.R. Tolkien (55). The dataset counts editions, not works, so Shakespeare's 93 are mostly repeated editions of the same plays.
+- **Best average rating by author** (10+ books): Akira Watanabe and Hiromu Arakawa lead (4.56), followed by J.K. Rowling (4.50). Several of the top 10 are manga authors (Arakawa, Tsugumi Ohba, Tite Kubo), consistent with VIZ Media ranking third among publishers. Each manga volume counts as one book, which gives long series extra weight.
 
 ## Limitations
 - The length and decade differences are small (0.08 to 0.12 points out of 5). They are correlations, not causes.
 - **Coverage bias:** 1,700 books were published in 2006 but only 49 in 2008, so the dataset is concentrated around 2006-2007. Decade comparisons are only reliable for 1980-2000.
 - Imprints of the same company (Penguin Books / Penguin Classics) are counted as separate publishers.
 - Names after the `/` in `authors` are not always co-authors (they can be illustrators), and the dataset has no role information.
+- One author name contains a description from the raw data (`David E. Smith (Turgon of TheOneRing.net - ...)`), and its comma was replaced by a dash during cleaning.
+- Author names were checked for case-only duplicates only. Other spelling variants (extra spaces, initials) may remain.
+
+## How to reproduce
+```bash
+createdb books
+./clean_books.sh                      # creates books_clean.csv
+psql -d books -f schema.sql           # creates the table and loads the CSV
+psql -d books -f cleaning.sql         # cleaning decisions
+psql -d books -f normalize_authors.sql
+psql -d books -f analysis.sql
+```
+Note: the `COPY` path in `schema.sql` is absolute (`/workspaces/books-data-analysis/`). Change it if your folder is different.
 
 ## Files
 - `books.csv`: raw data
 - `clean_books.sh`: fixes the CSV before loading
+- `schema.sql`: creates the books table and loads the data
 - `cleaning.sql`: cleaning decisions in SQL
 - `normalize_authors.sql`: splits authors into their own tables
 - `analysis.sql`: analysis queries
