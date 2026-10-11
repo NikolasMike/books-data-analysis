@@ -11,3 +11,7 @@ UPDATE books SET num_pages = NULL WHERE num_pages = 0;
 
 -- Same publisher written 3 ways (VIZ Media, Viz Media, VIZ Media LLC)
 UPDATE books SET publisher = 'VIZ Media' WHERE publisher ILIKE '%viz media%';
+
+-- Convert dates to DATE (run after the impossible dates were set to NULL)
+ALTER TABLE books ALTER COLUMN publication_date TYPE DATE
+USING TO_DATE(publication_date, 'MM/DD/YYYY');
