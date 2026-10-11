@@ -33,3 +33,21 @@ ORDER BY decade;
 
 -- 6. Books per year: coverage drops sharply after 2007
 SELECT EXTRACT(YEAR FROM publication_date) AS year, COUNT(*) FROM books WHERE publication_date >= '2005-01-01' GROUP BY year ORDER BY year;
+
+-- 7. Authors with the most books
+SELECT a.name, COUNT(*)
+FROM authors AS a
+INNER JOIN books_authors AS ba ON a.author_id = ba.author_id
+GROUP BY a.name
+ORDER BY COUNT(*) DESC
+LIMIT 10;
+
+-- 8. Best average rating by author (at least 10 books)
+SELECT a.name, COUNT(*) AS books, ROUND(AVG(b.average_rating), 2) AS avg_rating
+FROM authors AS a
+INNER JOIN books_authors AS ba ON a.author_id = ba.author_id
+INNER JOIN books AS b ON ba.bookid = b.bookid
+GROUP BY a.name
+HAVING COUNT(*) >= 10
+ORDER BY AVG(b.average_rating) DESC
+LIMIT 10;
